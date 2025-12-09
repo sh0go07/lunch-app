@@ -1,0 +1,10 @@
+# --- Python用 ---
+__pycache__/
+*.pyc
+venv/
+.env
+
+# --- Node.js用 ---
+node_modules/
+dist/
+.DS_Store
