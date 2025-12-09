@@ -17,9 +17,32 @@ function App() {
   const [optimizedResult, setOptimizedResult] = useState<LunchItem[] | null>(null);
 
   const handleOptimizeClick = () => {
-    // ここに最適化ロジックを追加予定
-    alert(`予算: ¥${budget}, 目標タンパク質: ${targetProtein}g で最適化を実行！`);
-  };
+    setOptimizedResult(null);
+    setError(null);
+
+    fetch('http://127.0.0.1:8000/optimize/lunch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        budget: budget,
+        target_protein: targetProtein,
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("計算結果:", data);
+
+      // バックエンドから返ってきた"result"をセット
+      setOptimizedResult(data.result);
+    })
+    
+    .catch(err => {
+      console.error('最適化エラー:', err);
+      setError('最適化の計算に失敗しました');
+    });
+  };  
 
   useEffect(() => {
     fetch('http://127.0.0.1:8000/optimize/lunch')
@@ -33,6 +56,7 @@ function App() {
         setItems(data);
         setError(null);
       })
+      
       .catch((err: Error) => {
         console.error('Fetch error:', err);
         setError('Failed to fetch lunch items');
@@ -69,6 +93,19 @@ function App() {
       <hr />
         
       {error && <p style={{ color: 'red' }}>エラー: {error}</p>}
+
+      {optimizedResult && (
+        <div className="result-panel">
+          <h2>🎉 最適化結果</h2>
+          <ul>
+            {optimizedResult.map(item => (
+              <li key={item.id}>
+                {item.name} (¥{item.price}, P:{item.protein}g)
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
         
       <h2>🛒 商品リスト ({items.length} 種類)</h2>
         
@@ -80,10 +117,6 @@ function App() {
           </li>
         ))}
       </ul>
-        
-      {/* 今後、ここに予算設定や最適化ボタンが来るよ！ */}
-      <hr />
-      <p>...次は、ここに予算の入力欄を作るよ！</p>
     </div>
   );
 }
