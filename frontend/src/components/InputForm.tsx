@@ -39,6 +39,7 @@ export const InputForm: React.FC<Props> = ({
                         type="number" 
                         value={targetProtein} 
                         onChange={(e) => setTargetProtein(Number(e.target.value))} 
+                        onFocus={(e) => e.target.select()}
                         min="0" 
                     />
                 </label>
