@@ -1,42 +1,134 @@
-#root {
-  max-width: 1280px;
+/* --- 全体のレイアウト --- */
+.App {
+  max-width: 600px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 40px 20px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
+}
+
+h1 {
   text-align: center;
+  color: #333;
+  margin-bottom: 30px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* --- 入力フォーム (InputForm) --- */
+.control-panel {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.input-group {
+  margin-bottom: 16px;
+  font-size: 1.1rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.input-group label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.card {
-  padding: 2em;
+.input-group input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 100px;
+  text-align: right;
 }
 
-.read-the-docs {
-  color: #888;
+.optimize-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 10px;
+}
+
+.optimize-btn:hover {
+  background-color: #0056b3;
+}
+
+/* --- 結果カード (ResultCard) --- */
+.result-card {
+  background-color: #e3f2fd; /* 薄い青 */
+  border: 2px solid #2196f3;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 40px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+}
+
+.result-card h2 {
+  margin-top: 0;
+  color: #0d47a1;
+  font-size: 1.5rem;
+}
+
+.result-summary {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.result-list {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+}
+
+.result-item {
+  background-color: white;
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* --- 商品リスト (LunchList) --- */
+.lunch-list h3 {
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.item-list {
+  list-style: none;
+  padding: 0;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+/* --- エラー表示 --- */
+.error-message {
+  color: #d32f2f;
+  background-color: #ffebee;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 20px;
 }
