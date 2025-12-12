@@ -10,6 +10,8 @@ interface LunchItem {
   price: number;
   cal: number;
   protein: number;
+  carbs: number;
+  salt: number;
 }
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [budget, setBudget] = useState<number>(500);
   const [targetProtein, setTargetProtein] = useState(15);
+  const [targetCarbs, setTargetCarbs] = useState(50);
+  const [targetSalt, setTargetSalt] = useState(2.0);
   const [result, setResult] = useState<LunchItem[] | null>(null);
 
   const handleOptimizeClick = () => {
@@ -31,6 +35,8 @@ function App() {
       body: JSON.stringify({
         budget: budget,
         target_protein: targetProtein,
+        target_carbs: targetCarbs,
+        target_salt: targetSalt,
       }),
     })
     .then(response => response.json())
@@ -77,6 +83,10 @@ function App() {
         setBudget={setBudget}
         targetProtein={targetProtein}
         setTargetProtein={setTargetProtein}
+        targetCarbs={targetCarbs}
+        setTargetCarbs={setTargetCarbs}
+        targetSalt={targetSalt}
+        setTargetSalt={setTargetSalt}
         onOptimize={handleOptimizeClick}
       />
     
