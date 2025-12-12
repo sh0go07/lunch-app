@@ -5,6 +5,10 @@ interface Props {
     setBudget: (value: number) => void;
     targetProtein: number;
     setTargetProtein: (value: number) => void;
+    targetCarbs: number;
+    setTargetCarbs: (value: number) => void;
+    targetSalt: number;
+    setTargetSalt: (value: number) => void;
     onOptimize: () => void;
 }
 
@@ -13,6 +17,10 @@ export const InputForm: React.FC<Props> = ({
     setBudget, 
     targetProtein,
     setTargetProtein,
+    targetCarbs,
+    setTargetCarbs,
+    targetSalt,
+    setTargetSalt,
     onOptimize
 }) => {
     return (
@@ -41,6 +49,28 @@ export const InputForm: React.FC<Props> = ({
                         onChange={(e) => setTargetProtein(Number(e.target.value))} 
                         onFocus={(e) => e.target.select()}
                         min="0" 
+                    />
+                </label>
+
+                <label>
+                    🍚 欲しい炭水化物 (g):
+                    <input
+                        type="number"
+                        value={targetCarbs}
+                        onChange={(e) => setTargetCarbs(Number(e.target.value))}
+                        onFocus={(e) => e.target.select()}
+                        min="0"
+                    />
+                </label>
+
+                <label>
+                    🧂 欲しい塩分 (g):
+                    <input
+                        type="number"
+                        value={targetSalt}
+                        onChange={(e) => setTargetSalt(Number(e.target.value))}
+                        onFocus={(e) => e.target.select()}
+                        min="0"
                     />
                 </label>
             </div>

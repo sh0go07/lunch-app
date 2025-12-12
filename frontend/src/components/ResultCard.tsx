@@ -10,6 +10,8 @@ export const ResultCard: React.FC<Props> = ({ result }) => {
 
     const totalCost = result.reduce((sum, item) => sum + item.price, 0);
     const totalProtein = result.reduce((sum, item) => sum + item.protein, 0);
+    const totalCarbs = result.reduce((sum, item) => sum + item.carbs, 0);
+    const totalSalt = result.reduce((sum, item) => sum + item.salt, 0);
 
     return (
     <div className="result-card">
@@ -18,6 +20,8 @@ export const ResultCard: React.FC<Props> = ({ result }) => {
       <div className="result-summary">
         <span>💰 合計: ¥{totalCost}</span>
         <span>💪 P: {totalProtein.toFixed(1)}g</span>
+        <span>🍚 C: {totalCarbs.toFixed(1)}g</span>
+        <span>🧂 S: {totalSalt.toFixed(1)}g</span>
       </div>
 
       <ul className="result-list">
