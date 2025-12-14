@@ -6,8 +6,8 @@ export interface LunchItem {
     price: number;
     cal: number;
     protein: number;
-    carbs: number;
-    salt: number;
+    carbs: number | null;
+    salt: number | null;
 }
 
 export const fetchLunchItems = async (): Promise<LunchItem[]> => {
