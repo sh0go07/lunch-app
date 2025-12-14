@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 import numpy as np
+import csv
+import os
 
 # QUBO用のライブラリ
 from pyqubo import Array, Constraint, Placeholder
@@ -25,13 +27,43 @@ app.add_middleware(
 )
 
 # 商品データの定義
-item_list: List[Dict[str, Any]] = [
-    {"id": 1, "name": "鮭おにぎり", "price": 150, "cal": 180, "protein": 4.5, "carbs": 35.0, "salt": 0.9},
-    {"id": 2, "name": "サラダチキン", "price": 240, "cal": 120, "protein": 25.0, "carbs": 1.0, "salt":1.5},
-    {"id": 3, "name": "野菜ジュース", "price": 110, "cal": 70, "protein": 0.8, "carbs": 15.0, "salt": 0.2},
-    {"id": 4, "name": "プリン", "price": 120, "cal": 150, "protein": 3.0, "carbs": 20.0, "salt": 0.1},
-    {"id": 5, "name": "からあげ棒", "price": 160, "cal": 220, "protein": 7.0, "carbs": 10.0, "salt": 1.0},
-]
+def load_items_from_csv():
+    items = []
+    csv_path = os.path.join(os.path.dirname(__file__), "items.csv")
+
+    print(f"CSVファイルが見つかりません: {csv_path}")
+
+    if not os.path.exists(csv_path):
+        print(f"CSVファイルが見つかりません！")
+        return []
+
+    try:
+        with open(csv_path, mode="r", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                try:
+                    items.append({
+                        "id": int(row["id"]),
+                        "name": row["name"],
+                        "category": row["category"],
+                        "category_label": row["category_label"],
+                        "price": int(row["price"]),
+                        "cal": float(row["cal"]),
+                        "protein": float(row["protein"]),
+                        "carbs": float(row["carbs"]),
+                        "salt": float(row["salt"]),
+                    })
+                except ValueError as e:
+                    print(f"データの変換エラー: {row['name']} ({e})")
+        
+        print(f"CSVから {len(items)} 個の商品を読み込みました")
+        return items
+
+    except Exception as e:
+        print(f"CSVファイルの読み込み中にエラーが発生しました: {e}")
+        return []
+
+item_list = load_items_from_csv()
 
 # フロントから送られてくるデータの形
 class OptimizationRequest(BaseModel):
@@ -48,6 +80,14 @@ def read_root():
 @app.post("/optimize/lunch")
 def optimize_lunch(request: OptimizationRequest):
     N = len(item_list)
+
+    if N == 0:
+        print(f"データが0件なので計算できません！")
+        return {
+            "result": [],
+            "total_price": 0,
+            "message": "商品データを読み込めませんでした"
+        }
 
     # 変数の定義
     x = Array.create('x', shape=N, vartype='BINARY')

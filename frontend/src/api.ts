@@ -3,6 +3,8 @@ const BASE_URL = "http://127.0.0.1:8000";
 export interface LunchItem {
     id: number;
     name: string;
+    category: string | null;
+    category_label: string | null;
     price: number;
     cal: number;
     protein: number;
