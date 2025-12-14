@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import numpy as np
 
 # QUBO用のライブラリ
@@ -37,8 +37,8 @@ item_list: List[Dict[str, Any]] = [
 class OptimizationRequest(BaseModel):
     budget: int
     target_protein: float
-    target_carbs: float
-    target_salt: float
+    target_carbs: Optional[float]
+    target_salt: Optional[float]
 
 @app.get("/")
 def read_root():
@@ -60,15 +60,21 @@ def optimize_lunch(request: OptimizationRequest):
 
     # 目的関数と制約条件
     H_protein = (total_protein - request.target_protein) ** 2
-    H_carbs = (total_carbs - request.target_carbs) ** 2
-    H_salt = (total_salt - request.target_salt) ** 2
-    
+    H = H_protein
+
     H_price = Constraint(
         (total_price - request.budget) ** 2,
         label="budget_constraint"
     )
+    H += 10.0 * H_price
 
-    H = H_protein + H_carbs + H_salt + 10.0 * H_price
+    if request.target_carbs is not None:
+        H_carbs = (total_carbs - request.target_carbs) ** 2
+        H += H_carbs
+    
+    if request.target_salt is not None:
+        H_salt = (total_salt - request.target_salt) ** 2
+        H += H_salt
 
     # QUBOモデルのコンパイル
     model = H.compile()
