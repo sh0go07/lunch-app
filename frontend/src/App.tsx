@@ -17,13 +17,14 @@ interface LunchItem {
 function App() {
   const [items, setItems] = useState<LunchItem[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [budget, setBudget] = useState<number>(500);
-  const [targetProtein, setTargetProtein] = useState(15);
-  const [targetCarbs, setTargetCarbs] = useState(50);
-  const [targetSalt, setTargetSalt] = useState(2.0);
   const [result, setResult] = useState<LunchItem[] | null>(null);
 
-  const handleOptimizeClick = () => {
+  const handleOptimizeClick = (
+    budget: number,
+    targetProtein: number,
+    targetCarbs: number | null,
+    targetSalt: number | null,
+  ) => {
     setResult(null);
     setError(null);
 
@@ -78,17 +79,7 @@ function App() {
 
       <hr />
 
-      <InputForm
-        budget={budget}
-        setBudget={setBudget}
-        targetProtein={targetProtein}
-        setTargetProtein={setTargetProtein}
-        targetCarbs={targetCarbs}
-        setTargetCarbs={setTargetCarbs}
-        targetSalt={targetSalt}
-        setTargetSalt={setTargetSalt}
-        onOptimize={handleOptimizeClick}
-      />
+      <InputForm onCalculate={handleOptimizeClick} />
     
       <hr />
         
