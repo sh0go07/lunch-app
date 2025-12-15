@@ -14,6 +14,41 @@ h1 {
 }
 
 /* --- 入力フォーム (InputForm) --- */
+.mode-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s;
+  color: black;
+}
+
+.mode-btn:active {
+  transform: scale(0.95); /* 押したときにピョコッとなる */
+}
+
+.muscle {
+  background-color: #e74c3c;
+  color: white;
+}
+.diet {
+  background-color: #2ecc71;
+  color: white;
+}
+.health {
+  background-color: #3498db;
+  color: white;
+}
+
 .control-panel {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
@@ -46,20 +81,6 @@ h1 {
 .advanced-toggle {
   margin: 20px 0;
   text-align: left;
-}
-
-.toggle-label {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: bold;
-  color: #333;
-  user-select: none;
-}
-
-.toggle-label:hover {
-  opacity: 0.8;
 }
 
 .optimize-btn {
