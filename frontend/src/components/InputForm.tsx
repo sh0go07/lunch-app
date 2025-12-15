@@ -4,26 +4,21 @@ import '../App.css';
 interface Props {
     onCalculate: (
         budget: number,
-        setBudget: (value: number) => void,
         targetProtein: number,
-        setTargetProtein: (value: number) => void,
         targetCarbs: number,
-        setTargetCarbs: (value: number | null) => void,
         targetSalt: number,
-        setTargetSalt: (value: number | null) => void,
-        onOptimize: () => void,
-        isLoading: boolean,
     ) => void;
 }
 
 export const InputForm: React.FC<Props> = ({ onCalculate }) => {
     const [budget, setBudget] = useState<number>(800);
-    const [targetProtein, setTargetProtein] = useState<number>();
+    const [targetProtein, setTargetProtein] = useState<number>(20);
     const [targetCarbs, setTargetCarbs] = useState<string>();
     const [targetSalt, setTargetSalt] = useState<string>();
 
     const applyMode = (mode:'normal' | 'muscle' | 'diet' | 'health') => {
         if (mode === 'normal') {
+            setTargetProtein(20);
             setTargetCarbs('');
             setTargetSalt('');
         } else if (mode === 'muscle') {
