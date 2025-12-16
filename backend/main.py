@@ -103,18 +103,18 @@ def optimize_lunch(request: OptimizationRequest):
         (total_price - request.budget) ** 2,
         label="budget_constraint"
     )
-    H = 10.0 * H_price
+    H = H_price
 
     H_protein = (total_protein - request.target_protein) ** 2
-    H += H_protein
+    H += 10.0 * H_protein
 
     if request.target_carbs is not None:
         H_carbs = (total_carbs - request.target_carbs) ** 2
-        H += H_carbs
+        H += 5.0 * H_carbs
     
     if request.target_salt is not None:
         H_salt = (total_salt - request.target_salt) ** 2
-        H += H_salt
+        H += 10.0 * H_salt
 
     # QUBOモデルのコンパイル
     model = H.compile()
