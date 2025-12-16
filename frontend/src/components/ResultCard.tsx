@@ -9,6 +9,7 @@ export const ResultCard: React.FC<Props> = ({ result }) => {
     if (!result) return null;
 
     const totalCost = result.reduce((sum, item) => sum + item.price, 0);
+    const totalCal = result.reduce((sum, item) => sum + item.cal, 0);
     const totalProtein = result.reduce((sum, item) => sum + item.protein, 0);
     const totalCarbs = result.reduce((sum, item) => sum + item.carbs, 0);
     const totalSalt = result.reduce((sum, item) => sum + item.salt, 0);
@@ -18,17 +19,18 @@ export const ResultCard: React.FC<Props> = ({ result }) => {
       <h2>🎉 おすすめの最強ランチ！</h2>
       
       <div className="result-summary">
-        <span>💰 合計: ¥{totalCost}</span>
-        <span>💪 P: {totalProtein.toFixed(1)}g</span>
-        <span>🍚 C: {totalCarbs.toFixed(1)}g</span>
-        <span>🧂 S: {totalSalt.toFixed(1)}g</span>
+        <span>💰: ¥{totalCost}</span>
+        <span>🔥: {totalCal.toFixed(1)}kcal</span>
+        <span>💪: {totalProtein.toFixed(1)}g</span>
+        <span>🍚: {totalCarbs.toFixed(1)}g</span>
+        <span>🧂: {totalSalt.toFixed(1)}g</span>
       </div>
 
       <ul className="result-list">
         {result.map(item => (
           <li key={item.id} className="result-item">
             <span>{item.name}</span>
-            <span style={{ color: '#666' }}>¥{item.price}</span>
+            <span style={{ color: '#666' }}>¥ {item.price} / {item.cal} kcal / {item.protein} g / {item.carbs} g / {item.salt} g</span>
           </li>
         ))}
       </ul>

@@ -68,6 +68,7 @@ item_list = load_items_from_csv()
 # フロントから送られてくるデータの形
 class OptimizationRequest(BaseModel):
     budget: int
+    target_cal: int
     target_protein: float
     target_carbs: Optional[float]
     target_salt: Optional[float]
@@ -93,10 +94,11 @@ def optimize_lunch(request: OptimizationRequest):
     x = Array.create('x', shape=N, vartype='BINARY')
 
     # 数式の定義
+    total_price = sum(item_list[i]['price'] * x[i] for i in range(N))
+    total_cal = sum(item_list[i]['cal'] * x[i] for i in range(N))
     total_protein = sum(item_list[i]['protein'] * x[i] for i in range(N))
     total_carbs = sum(item_list[i]['carbs'] * x[i] for i in range(N))
     total_salt = sum(item_list[i]['salt'] * x[i] for i in range(N))
-    total_price = sum(item_list[i]['price'] * x[i] for i in range(N))
 
     # 目的関数と制約条件
     H_price = Constraint(
@@ -104,6 +106,9 @@ def optimize_lunch(request: OptimizationRequest):
         label="budget_constraint"
     )
     H = H_price
+
+    H_cal = (total_cal - request.target_cal) ** 2
+    H += 10.0 * H_cal
 
     H_protein = (total_protein - request.target_protein) ** 2
     H += 10.0 * H_protein
@@ -138,6 +143,7 @@ def optimize_lunch(request: OptimizationRequest):
     return {
         "result": selected_items,
         "total_price": total_p,
+        "total_cal": sum(item['cal'] for item in selected_items),
         "total_protein": sum(item['protein'] for item in selected_items),
         "total_carbs": sum(item['carbs'] for item in selected_items),
         "total_salt": sum(item['salt'] for item in selected_items),
