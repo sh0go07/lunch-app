@@ -1,19 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 import { InputForm } from './components/InputForm.tsx';
 import { LunchList } from './components/LunchList.tsx';
 import { ResultCard } from './components/ResultCard.tsx';
-import { fetchLunchItems, calculateLunch } from './api';
-
-interface LunchItem {
-  id: number;
-  name: string;
-  price: number;
-  cal: number;
-  protein: number;
-  carbs: number;
-  salt: number;
-}
+import type { LunchItem } from './api';
 
 function App() {
   const [items, setItems] = useState<LunchItem[]>([]);
@@ -24,8 +14,8 @@ function App() {
     budget: number,
     targetCal: number,
     targetProtein: number,
-    targetCarbs: number | null,
-    targetSalt: number | null,
+    targetCarbs: number,
+    targetSalt: number,
   ) => {
     setResult(null);
     setError(null);

@@ -1,15 +1,15 @@
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = import.meta.env.BASE_URL;
 
 export interface LunchItem {
     id: number;
     name: string;
-    category: string | null;
-    category_label: string | null;
+    category: string;
+    category_label: string;
     price: number;
     cal: number;
     protein: number;
-    carbs: number | null;
-    salt: number | null;
+    carbs: number;
+    salt: number;
 }
 
 export interface OptimizeRequest {
