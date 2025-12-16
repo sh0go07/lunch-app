@@ -3,6 +3,7 @@ import './App.css';
 import { InputForm } from './components/InputForm.tsx';
 import { LunchList } from './components/LunchList.tsx';
 import { ResultCard } from './components/ResultCard.tsx';
+import { fetchLunchItems, calculateLunch } from './api';
 
 interface LunchItem {
   id: number;
@@ -19,7 +20,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<LunchItem[] | null>(null);
 
-  const handleOptimizeClick = (
+  const handleCalculate = async (
     budget: number,
     targetProtein: number,
     targetCarbs: number | null,
@@ -28,49 +29,36 @@ function App() {
     setResult(null);
     setError(null);
 
-    fetch('http://127.0.0.1:8000/optimize/lunch', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        budget: budget,
+    try {
+      const data = await calculateLunch({
+        budget,
         target_protein: targetProtein,
         target_carbs: targetCarbs,
         target_salt: targetSalt,
-      }),
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log("計算結果:", data);
+      });
 
-      // バックエンドから返ってきた"result"をセット
-      setResult(data.result);
-    })
-    
-    .catch(err => {
+      console.log("計算結果:", data);
+      if (data.message) {
+        setError(data.message)
+      } else {
+        setResult(data.result);
+      }
+    } catch (err) {
       console.error('最適化エラー:', err);
       setError('最適化の計算に失敗しました');
-    });
-  };  
+    }
+  }
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/optimize/lunch')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data: LunchItem[]) => {
+    fetchLunchItems()
+      .then(data => {
         setItems(data);
         setError(null);
       })
-      
-      .catch((err: Error) => {
+      .catch(err => {
         console.error('Fetch error:', err);
         setError('Failed to fetch lunch items');
-      });
+      })
   }, []);
 
   return (
@@ -79,7 +67,7 @@ function App() {
 
       <hr />
 
-      <InputForm onCalculate={handleOptimizeClick} />
+      <InputForm onCalculate={handleCalculate} />
     
       <hr />
         
