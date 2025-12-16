@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import { Header } from './components/Header.tsx';
 import { InputForm } from './components/InputForm.tsx';
 import { LunchList } from './components/LunchList.tsx';
 import { ResultCard } from './components/ResultCard.tsx';
@@ -56,9 +57,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>🍱 コンビニご飯献立アプリ</h1>
-
-      <hr />
+      <Header />
 
       <InputForm onCalculate={handleCalculate} />
     

@@ -8,9 +8,7 @@
   color: #444444;
 }
 
-h1 {
-  display: inline-flex;
-  padding: 10px 104px 10px 16px;
+.app-header {
   text-align: left;
   color: #444444;
   font-size: 20px;
@@ -20,6 +18,12 @@ h1 {
   margin-bottom: 30px;
   align-items: center;
   background-color: #f98926;
+}
+
+.header-icon {
+  width: 40px;
+  height: auto;
+  transform: translateY(9px); 
 }
 
 /* --- 入力フォーム (InputForm) --- */
