@@ -41,8 +41,8 @@ export const InputForm: React.FC<Props> = ({ onCalculate }) => {
         onCalculate(
             budget,
             targetProtein,
-            targetCarbs ? Number(targetCarbs) : null,
-            targetSalt ? Number(targetSalt) : null,
+            targetCarbs ? Number(targetCarbs) : 0,
+            targetSalt ? Number(targetSalt) : 0,
         );
     };
 

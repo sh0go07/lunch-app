@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = import.meta.env.BASE_URL;
 
 export interface LunchItem {
     id: number;
@@ -8,8 +8,8 @@ export interface LunchItem {
     price: number;
     cal: number;
     protein: number;
-    carbs: number | null;
-    salt: number | null;
+    carbs: number;
+    salt: number;
 }
 
 export const fetchLunchItems = async (): Promise<LunchItem[]> => {
