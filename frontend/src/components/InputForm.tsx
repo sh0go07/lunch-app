@@ -4,6 +4,7 @@ import '../App.css';
 interface Props {
     onCalculate: (
         budget: number,
+        targetCal: number,
         targetProtein: number,
         targetCarbs: number,
         targetSalt: number,
@@ -12,6 +13,7 @@ interface Props {
 
 export const InputForm: React.FC<Props> = ({ onCalculate }) => {
     const [budget, setBudget] = useState<number>(800);
+    const [targetCal, setTargetCal] = useState<number>(500);
     const [targetProtein, setTargetProtein] = useState<number>(20);
     const [targetCarbs, setTargetCarbs] = useState<string>();
     const [targetSalt, setTargetSalt] = useState<string>();
@@ -26,10 +28,12 @@ export const InputForm: React.FC<Props> = ({ onCalculate }) => {
             setTargetCarbs('');
             setTargetSalt('');
         } else if (mode === 'diet') {
+            setTargetCal(500);
             setTargetProtein(20);
             setTargetCarbs('30');
             setTargetSalt('');
         } else if (mode === 'health') {
+            setTargetCal(500);
             setTargetProtein(15);
             setTargetCarbs('');
             setTargetSalt('2.0');
@@ -40,6 +44,7 @@ export const InputForm: React.FC<Props> = ({ onCalculate }) => {
         e.preventDefault();
         onCalculate(
             budget,
+            targetCal,
             targetProtein,
             targetCarbs ? Number(targetCarbs) : 0,
             targetSalt ? Number(targetSalt) : 0,
@@ -84,6 +89,17 @@ export const InputForm: React.FC<Props> = ({ onCalculate }) => {
                         </label>
 
                         <label>
+                            🔥 欲しいカロリー (kcal):
+                            <input
+                                type="number"
+                                value={targetCal}
+                                onChange={(e) => setTargetCal(Number(e.target.value))}
+                                onFocus={(e) => e.target.select()}
+                                min='0'
+                            />
+                        </label>
+
+                        <label>
                             💪 欲しいタンパク質 (g): 
                             <input 
                                 type="number" 
@@ -94,27 +110,27 @@ export const InputForm: React.FC<Props> = ({ onCalculate }) => {
                             />
                         </label>
 
-                            <label>
-                                🍚 欲しい炭水化物 (g):
-                                <input
-                                type="number"
-                                    value={targetCarbs ?? ''}
-                                    onChange={(e) => setTargetCarbs(e.target.value)}
-                                    onFocus={(e) => e.target.select()}
-                                    min="0"
-                                />
-                            </label>
+                        <label>
+                            🍚 欲しい炭水化物 (g):
+                            <input
+                            type="number"
+                                value={targetCarbs ?? ''}
+                                onChange={(e) => setTargetCarbs(e.target.value)}
+                                onFocus={(e) => e.target.select()}
+                                min="0"
+                            />
+                        </label>
 
-                            <label>
-                                🧂 欲しい塩分 (g):
-                                <input
-                                    type="number"
-                                    value={targetSalt}
-                                    onChange={(e) => setTargetSalt(e.target.value)}
-                                    onFocus={(e) => e.target.select()}
-                                    min="0"
-                                />
-                            </label>
+                        <label>
+                            🧂 欲しい塩分 (g):
+                            <input
+                                type="number"
+                                value={targetSalt}
+                                onChange={(e) => setTargetSalt(e.target.value)}
+                                onFocus={(e) => e.target.select()}
+                                min="0"
+                            />
+                        </label>
                     </div>
 
                     <button type="submit" className="optimize-btn">
