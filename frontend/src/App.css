@@ -3,14 +3,23 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 40px 20px;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  color: #333;
+  background-color: #FFFDF5;
+  font-family: 'Zen Maru Gothic', sans-serif;
+  color: #444444;
 }
 
 h1 {
-  text-align: center;
-  color: #333;
+  display: inline-flex;
+  padding: 10px 104px 10px 16px;
+  text-align: left;
+  color: #444444;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
   margin-bottom: 30px;
+  align-items: center;
+  background-color: #f98926;
 }
 
 /* --- 入力フォーム (InputForm) --- */
@@ -22,37 +31,36 @@ h1 {
 }
 
 .mode-btn {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
+  display: flex;
+  padding: 13px;
+  border-radius: 5px;
   cursor: pointer;
   transition: transform 0.1s;
-  color: black;
+  color: #444444;
+  font-size: 12px;
 }
 
 .mode-btn:active {
   transform: scale(0.95); /* 押したときにピョコッとなる */
 }
 
+.normal {
+  background-color: #e6e6e6;
+}
 .muscle {
-  background-color: #e74c3c;
-  color: white;
+  background-color: #ff6969;
 }
 .diet {
-  background-color: #2ecc71;
-  color: white;
+  background-color: #48D967;
 }
 .health {
-  background-color: #3498db;
-  color: white;
+  background-color: #54C4FD;
 }
 
 .control-panel {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 12px;
+  background-color: #ffecc9;
+  border: 2px solid #ffd78c;
+  border-radius: 20px;
   padding: 24px;
   margin-bottom: 30px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -86,26 +94,26 @@ h1 {
 .optimize-btn {
   width: 100%;
   padding: 12px;
-  background-color: #007BFF;
-  color: white;
+  background-color: #ffd78c;
+  color: #444444;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.1s;
   margin-top: 10px;
 }
 
-.optimize-btn:hover {
-  background-color: #0056b3;
+.optimize-btn:active {
+  transform: scale(0.95); /* 押したときにピョコッとなる */
 }
 
 /* --- 結果カード (ResultCard) --- */
 .result-card {
-  background-color: #e3f2fd; /* 薄い青 */
-  border: 2px solid #2196f3;
-  border-radius: 16px;
+  background-color: #d6eeff;
+  border: 2px solid #8fd1ff;
+  border-radius: 20px;
   padding: 24px;
   margin-bottom: 40px;
   text-align: center;
@@ -114,18 +122,17 @@ h1 {
 
 .result-card h2 {
   margin-top: 0;
-  color: #0d47a1;
-  font-size: 1.5rem;
+  font-size: 16px;
 }
 
 .result-summary {
   display: flex;
   justify-content: center;
   gap: 20px;
-  font-size: 1.2rem;
+  font-size: 12px;
   font-weight: bold;
   margin-bottom: 20px;
-  color: #333;
+  color: #444444;
 }
 
 .result-list {
@@ -135,7 +142,7 @@ h1 {
 }
 
 .result-item {
-  background-color: white;
+  background-color: #f6f6f6;
   padding: 10px 15px;
   margin-bottom: 8px;
   border-radius: 8px;
