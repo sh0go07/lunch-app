@@ -14,6 +14,7 @@ export interface LunchItem {
 
 export interface OptimizeRequest {
     budget: number;
+    target_cal: number | null;
     target_protein: number;
     target_carbs: number | null;
     target_salt: number | null;

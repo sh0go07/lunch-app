@@ -22,6 +22,7 @@ function App() {
 
   const handleCalculate = async (
     budget: number,
+    targetCal: number,
     targetProtein: number,
     targetCarbs: number | null,
     targetSalt: number | null,
@@ -32,6 +33,7 @@ function App() {
     try {
       const data = await calculateLunch({
         budget,
+        target_cal: targetCal,
         target_protein: targetProtein,
         target_carbs: targetCarbs,
         target_salt: targetSalt,
