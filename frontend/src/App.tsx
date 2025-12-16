@@ -4,6 +4,7 @@ import { InputForm } from './components/InputForm.tsx';
 import { LunchList } from './components/LunchList.tsx';
 import { ResultCard } from './components/ResultCard.tsx';
 import type { LunchItem } from './api';
+import { calculateLunch, fetchLunchItems } from './api';
 
 function App() {
   const [items, setItems] = useState<LunchItem[]>([]);
