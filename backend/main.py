@@ -20,7 +20,7 @@ origin = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origin,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -31,7 +31,7 @@ def load_items_from_csv():
     items = []
     csv_path = os.path.join(os.path.dirname(__file__), "items.csv")
 
-    print(f"CSVファイルが見つかりません: {csv_path}")
+    print(f"CSVファイルのパスを確認中: {csv_path}")
 
     if not os.path.exists(csv_path):
         print(f"CSVファイルが見つかりません！")
@@ -99,22 +99,22 @@ def optimize_lunch(request: OptimizationRequest):
     total_price = sum(item_list[i]['price'] * x[i] for i in range(N))
 
     # 目的関数と制約条件
-    H_protein = (total_protein - request.target_protein) ** 2
-    H = H_protein
-
     H_price = Constraint(
         (total_price - request.budget) ** 2,
         label="budget_constraint"
     )
-    H += 10.0 * H_price
+    H = H_price
+
+    H_protein = (total_protein - request.target_protein) ** 2
+    H += 10.0 * H_protein
 
     if request.target_carbs is not None:
         H_carbs = (total_carbs - request.target_carbs) ** 2
-        H += H_carbs
+        H += 5.0 * H_carbs
     
     if request.target_salt is not None:
         H_salt = (total_salt - request.target_salt) ** 2
-        H += H_salt
+        H += 10.0 * H_salt
 
     # QUBOモデルのコンパイル
     model = H.compile()

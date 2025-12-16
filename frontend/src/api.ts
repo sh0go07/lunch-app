@@ -12,13 +12,28 @@ export interface LunchItem {
     salt: number | null;
 }
 
+export interface OptimizeRequest {
+    budget: number;
+    target_protein: number;
+    target_carbs: number | null;
+    target_salt: number | null;
+}
+
 export const fetchLunchItems = async (): Promise<LunchItem[]> => {
-    const response = await fetch(`${BASE_URL}/opttimize/lunch`, {
-        method: `POST`,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ budget: 500, target_protein: 15, target_carbs: 50, target_salt: 2.0 }),
-    });
+    const response = await fetch(`${BASE_URL}/optimize/lunch`);
+
+    if (!response.ok) throw new Error("データ取得エラー");
     
+    return response.json();
+}
+
+export const calculateLunch = async (req: OptimizeRequest): Promise<{ result: LunchItem[], message?: string }> => {
+    const response = await fetch(`${BASE_URL}/optimize/lunch`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(req),
+    })
+
     if (!response.ok) throw new Error("計算エラー");
     
     return response.json();
