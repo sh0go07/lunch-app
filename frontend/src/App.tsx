@@ -56,7 +56,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>🍱 コンビニ最適化アプリ (QUBO Hackathon)</h1>
+      <h1>🍱 コンビニご飯献立アプリ</h1>
 
       <hr />
 
