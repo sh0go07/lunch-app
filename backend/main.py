@@ -7,7 +7,7 @@ import csv
 import os
 
 # QUBO用のライブラリ
-from pyqubo import Array, Constraint, Placeholder
+from pyqubo import Array, Constraint, LogEncInteger
 import openjij as oj
 
 app = FastAPI()
@@ -100,18 +100,20 @@ def optimize_lunch(request: OptimizationRequest):
     total_carbs = sum(item_list[i]['carbs'] * x[i] for i in range(N))
     total_salt = sum(item_list[i]['salt'] * x[i] for i in range(N))
 
+    slack = LogEncInteger("slack", (0, request.budget))
+
     # 目的関数と制約条件
     H_price = Constraint(
-        (total_price - request.budget) ** 2,
+        (total_price + slack - request.budget) ** 2,
         label="budget_constraint"
     )
-    H = H_price
+    H = 100 * H_price
 
     H_cal = (total_cal - request.target_cal) ** 2
     H += 10.0 * H_cal
 
     H_protein = (total_protein - request.target_protein) ** 2
-    H += 10.0 * H_protein
+    H += 3.0 * H_protein
 
     if request.target_carbs is not None:
         H_carbs = (total_carbs - request.target_carbs) ** 2
@@ -139,6 +141,14 @@ def optimize_lunch(request: OptimizationRequest):
             selected_items.append(item_list[i])
     
     total_p = sum(item['price'] for item in selected_items)
+
+    if total_p > request.budget:
+        print(f"⚠️ 予算オーバー発生: {total_p}円 > {request.budget}円")
+        return {
+            "result": [],
+            "total_price": 0,
+            "message": "予算内の組み合わせが見つかりませんでした。"
+        }
 
     return {
         "result": selected_items,
