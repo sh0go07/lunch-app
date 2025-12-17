@@ -7,7 +7,7 @@ import csv
 import os
 
 # QUBO用のライブラリ
-from pyqubo import Array, Constraint, Placeholder
+from pyqubo import Array, Constraint, LogEncInteger
 import openjij as oj
 
 app = FastAPI()
@@ -77,6 +77,10 @@ class OptimizationRequest(BaseModel):
 def read_root():
     return {"message": "Hello World! This is the Quantum Lunch App!"}
 
+@app.get("/items")
+def get_items():
+    return item_list
+
 # QUBOで計算するAPI
 @app.post("/optimize/lunch")
 def optimize_lunch(request: OptimizationRequest):
@@ -100,18 +104,33 @@ def optimize_lunch(request: OptimizationRequest):
     total_carbs = sum(item_list[i]['carbs'] * x[i] for i in range(N))
     total_salt = sum(item_list[i]['salt'] * x[i] for i in range(N))
 
+    slack = LogEncInteger("slack", (0, request.budget))
+
     # 目的関数と制約条件
     H_price = Constraint(
-        (total_price - request.budget) ** 2,
+        (total_price + slack - request.budget) ** 2,
         label="budget_constraint"
     )
-    H = H_price
+    H = 1000 * H_price
+
+    categories = set(item['category'] for item in item_list)
+
+    for cat in categories:
+        cat_indices = [i for i, item in enumerate(item_list) if item['category'] == cat]
+
+        if cat_indices:
+            H_cat = Constraint(
+                (sum(x[i] for i in cat_indices) - 1) ** 2,
+                label=f"one_{cat}_constraint"
+            )
+
+            H += 1000.0 * H_cat
 
     H_cal = (total_cal - request.target_cal) ** 2
     H += 10.0 * H_cal
 
     H_protein = (total_protein - request.target_protein) ** 2
-    H += 10.0 * H_protein
+    H += 3.0 * H_protein
 
     if request.target_carbs is not None:
         H_carbs = (total_carbs - request.target_carbs) ** 2
@@ -139,6 +158,14 @@ def optimize_lunch(request: OptimizationRequest):
             selected_items.append(item_list[i])
     
     total_p = sum(item['price'] for item in selected_items)
+
+    if total_p > request.budget:
+        print(f"⚠️ 予算オーバー発生: {total_p}円 > {request.budget}円")
+        return {
+            "result": [],
+            "total_price": 0,
+            "message": "予算内の組み合わせが見つかりませんでした。"
+        }
 
     return {
         "result": selected_items,
