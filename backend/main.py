@@ -143,7 +143,7 @@ def optimize_lunch(request: OptimizationRequest):
         model = H.compile()
         qubo, offset = model.to_qubo()
         sampler = oj.SASampler()
-        response = sampler.sample_qubo(qubo, num_reads=1)
+        response = sampler.sample_qubo(qubo, num_reads=10)
 
         best_sample = response.first.sample
         selected_items = [item_list[i] for i in range(N) if best_sample[f'x[{i}]'] == 1]
