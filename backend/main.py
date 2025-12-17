@@ -113,19 +113,6 @@ def optimize_lunch(request: OptimizationRequest):
     )
     H = 1000 * H_price
 
-    categories = set(item['category'] for item in item_list)
-
-    for cat in categories:
-        cat_indices = [i for i, item in enumerate(item_list) if item['category'] == cat]
-
-        if cat_indices:
-            H_cat = Constraint(
-                (sum(x[i] for i in cat_indices) - 1) ** 2,
-                label=f"one_{cat}_constraint"
-            )
-
-            H += 1000.0 * H_cat
-
     H_cal = (total_cal - request.target_cal) ** 2
     H += 10.0 * H_cal
 
