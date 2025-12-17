@@ -77,6 +77,10 @@ class OptimizationRequest(BaseModel):
 def read_root():
     return {"message": "Hello World! This is the Quantum Lunch App!"}
 
+@app.get("/items")
+def get_items():
+    return item_list
+
 # QUBOで計算するAPI
 @app.post("/optimize/lunch")
 def optimize_lunch(request: OptimizationRequest):
@@ -107,7 +111,20 @@ def optimize_lunch(request: OptimizationRequest):
         (total_price + slack - request.budget) ** 2,
         label="budget_constraint"
     )
-    H = 100 * H_price
+    H = 1000 * H_price
+
+    categories = set(item['category'] for item in item_list)
+
+    for cat in categories:
+        cat_indices = [i for i, item in enumerate(item_list) if item['category'] == cat]
+
+        if cat_indices:
+            H_cat = Constraint(
+                (sum(x[i] for i in cat_indices) - 1) ** 2,
+                label=f"one_{cat}_constraint"
+            )
+
+            H += 1000.0 * H_cat
 
     H_cal = (total_cal - request.target_cal) ** 2
     H += 10.0 * H_cal
