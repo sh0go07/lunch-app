@@ -5,7 +5,6 @@ from typing import List, Dict, Any, Optional
 import numpy as np
 import csv
 import os
-import random
 
 # QUBO用のライブラリ
 from pyqubo import Array, Constraint, LogEncInteger
@@ -95,79 +94,75 @@ def optimize_lunch(request: OptimizationRequest):
             "message": "商品データを読み込めませんでした"
         }
 
-    all_categories = ['main', 'side', 'drink', 'dessert']
-    cat_indices = {cat: [] for cat in all_categories}
-    for i, item in enumerate(item_list):
-        if item['category'] in cat_indices:
-            cat_indices[item['category']].append(i)
+    # 変数の定義
+    x = Array.create('x', shape=N, vartype='BINARY')
 
-    priority_plans = [
-        ['main', 'side', 'drink', 'dessert'],
-        ['main', 'side', 'drink'],
-        ['main', 'side'],
-        ['main']
-    ]
+    # 数式の定義
+    total_price = sum(item_list[i]['price'] * x[i] for i in range(N))
+    total_cal = sum(item_list[i]['cal'] * x[i] for i in range(N))
+    total_protein = sum(item_list[i]['protein'] * x[i] for i in range(N))
+    total_carbs = sum(item_list[i]['carbs'] * x[i] for i in range(N))
+    total_salt = sum(item_list[i]['salt'] * x[i] for i in range(N))
 
-    for plan in priority_plans:
-        active_categories = plan
+    slack = LogEncInteger("slack", (0, request.budget))
 
-        x = Array.create('x', shape=N, vartype='BINARY')
+    # 目的関数と制約条件
+    H_price = Constraint(
+        (total_price + slack - request.budget) ** 2,
+        label="budget_constraint"
+    )
+    H = 1000 * H_price
 
-        # 数式の定義
-        total_price = sum(item_list[i]['price'] * x[i] for i in range(N))
-        total_cal = sum(item_list[i]['cal'] * x[i] for i in range(N))
-        total_protein = sum(item_list[i]['protein'] * x[i] for i in range(N))
-        total_carbs = sum(item_list[i]['carbs'] * x[i] for i in range(N))
-        total_salt = sum(item_list[i]['salt'] * x[i] for i in range(N))
+    H_cal = (total_cal - request.target_cal) ** 2
+    H += 10.0 * H_cal
 
-        H = 0
+    H_protein = (total_protein - request.target_protein) ** 2
+    H += 3.0 * H_protein
 
-        for cat in all_categories:
-            indices = cat_indices[cat]
-            if not indices: continue
+    if request.target_carbs is not None:
+        H_carbs = (total_carbs - request.target_carbs) ** 2
+        H += 5.0 * H_carbs
+    
+    if request.target_salt is not None:
+        H_salt = (total_salt - request.target_salt) ** 2
+        H += 10.0 * H_salt
 
-            if cat in active_categories:
-                H += 1000.0 * (sum(x[i] for i in indices) - 1) ** 2
-            else:
-                H += 1000.0 * (sum(x[i] for i in indices)) ** 2
+    # QUBOモデルのコンパイル
+    model = H.compile()
 
-        H += 10.0 * (total_price - request.budget * 0.9) ** 2
+    # ソルバで計算
+    qubo, offset = model.to_qubo()
 
-        rand = random.uniform(0.8, 1.2)
-        H += 1.0 * rand * (total_cal - request.target_cal) ** 2
-        H += 10.0 * rand * (total_protein - request.target_protein) ** 2
-        
-        if request.target_salt is not None:
-             H += 10.0 * (total_salt - request.target_salt) ** 2
+    sampler = oj.SASampler()
+    response = sampler.sample_qubo(qubo, num_reads=10)
 
-        model = H.compile()
-        qubo, offset = model.to_qubo()
-        sampler = oj.SASampler()
-        response = sampler.sample_qubo(qubo, num_reads=1)
+    # 最良解の取得
+    best_sample = response.first.sample
 
-        best_sample = response.first.sample
-        selected_items = [item_list[i] for i in range(N) if best_sample[f'x[{i}]'] == 1]
-        
-        current_price = sum(item['price'] for item in selected_items)
+    selected_items = []
+    for i in range(N):
+        if best_sample[f'x[{i}]'] == 1:
+            selected_items.append(item_list[i])
+    
+    total_p = sum(item['price'] for item in selected_items)
 
-        is_plan_fulfilled = len(selected_items) == len(active_categories)
+    if total_p > request.budget:
+        print(f"⚠️ 予算オーバー発生: {total_p}円 > {request.budget}円")
+        return {
+            "result": [],
+            "total_price": 0,
+            "message": "予算内の組み合わせが見つかりませんでした。"
+        }
 
-        if current_price <= request.budget and is_plan_fulfilled:
-            return {
-                "result": selected_items,
-                "total_price": current_price,
-                "total_cal": sum(item['cal'] for item in selected_items),
-                "total_protein": sum(item['protein'] for item in selected_items),
-                "total_carbs": sum(item['carbs'] for item in selected_items),
-                "total_salt": sum(item['salt'] for item in selected_items),
-                "message": f"プラン適用: {', '.join(active_categories)}"
-            }
-        
     return {
-        "result": [],
-        "total_price": 0,
-        "message": "予算が少なすぎて、主食も買えませんでした..."
+        "result": selected_items,
+        "total_price": total_p,
+        "total_cal": sum(item['cal'] for item in selected_items),
+        "total_protein": sum(item['protein'] for item in selected_items),
+        "total_carbs": sum(item['carbs'] for item in selected_items),
+        "total_salt": sum(item['salt'] for item in selected_items),
     }
+
 
 @app.get("/optimize/lunch")
 def optimize_lunch():
