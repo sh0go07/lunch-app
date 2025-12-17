@@ -84,6 +84,47 @@ def get_items():
 
 # QUBOで計算するAPI
 @app.post("/optimize/lunch")
+
+def fallback_selection(request: OptimizationRequest, plan: List[str]):
+    print(f"🔄 セーフティネット発動！プラン: {plan}")
+    
+    cat_items = {cat: [] for cat in plan}
+    for item in item_list:
+        if item['category'] in cat_items:
+            cat_items[item['category']].append(item)
+
+    best_candidate = None
+    best_price = -1
+
+    for _ in range(500):
+        selected = []
+        current_price = 0
+        possible = True
+        
+        for cat in plan:
+            if not cat_items[cat]:
+                possible = False
+                break
+
+            item = random.choice(cat_items[cat])
+            selected.append(item)
+            current_price += item['price']
+        
+        if possible and current_price <= request.budget:
+            if current_price > best_price:
+                best_price = current_price
+                best_candidate = {
+                    "result": selected,
+                    "total_price": current_price,
+                    "total_cal": sum(i['cal'] for i in selected),
+                    "total_protein": sum(i['protein'] for i in selected),
+                    "total_carbs": sum(i['carbs'] for i in selected),
+                    "total_salt": sum(i['salt'] for i in selected),
+                    "message": f"プラン適用(Fallback): {', '.join(plan)}"
+                }
+    
+    return best_candidate
+
 def optimize_lunch(request: OptimizationRequest):
     N = len(item_list)
 
