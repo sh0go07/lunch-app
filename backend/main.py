@@ -29,7 +29,7 @@ app.add_middleware(
 # 商品データの定義
 def load_items_from_csv():
     items = []
-    csv_path = os.path.join(os.path.dirname(__file__), "items.csv")
+    csv_path = os.path.join(os.path.dirname(__file__), "Items.csv")
 
     print(f"CSVファイルのパスを確認中: {csv_path}")
 
